@@ -1,0 +1,9 @@
+#include <string>
+
+namespace {
+  std::string const version_("@PROJECT_VERSION@");
+}
+
+std::string const & version() {
+  return version_;
+}

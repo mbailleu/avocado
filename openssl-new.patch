@@ -1,0 +1,75 @@
+diff -ur src/openssl/crypto/evp/e_aes.c other/openssl/crypto/evp/e_aes.c
+--- src/openssl/crypto/evp/e_aes.c	2017-05-25 14:54:38.000000000 +0200
++++ other/openssl/crypto/evp/e_aes.c	2018-10-24 17:34:30.355608330 +0200
+@@ -1272,6 +1272,57 @@
+             return 1;
+         }
+ 
++    case EVP_CTRL_GCM_GET_CTR:
++        {
++            const union {
++                long one;
++                char little;
++            } is_endian = {
++                1
++            };
++
++            if (ptr == NULL)
++                return 1;
++
++            unsigned int *out = ptr;
++            GCM128_CONTEXT *gcm = &(gctx->gcm);
++            if (is_endian.little) {
++# ifdef BSWAP4
++                *out = BSWAP4(gcm->Yi.d[3]);
++# else
++                *out = GETU32(gcm->Yi.c + 12);
++# endif
++            } else {
++                *out = gcm->Yi.d[3];
++            }
++            return 0;
++        }
++
++    case EVP_CTRL_GCM_SET_CTR:
++        {
++            const union {
++                long one;
++                char little;
++            } is_endian = {
++                1
++            };
++            if (ptr == NULL)
++                return 1;
++
++            unsigned int * ctr = ptr;
++            GCM128_CONTEXT *gcm = &(gctx->gcm);
++            if (is_endian.little) {
++# ifdef BSWAP4
++                gcm->Yi.d[3] = BSWAP4(*ctr);
++# else
++                PUTU32(gcm->Yi.c + 12, *ctr);
++# endif
++            } else {
++                gcm->Yi.d[3] = *ctr;
++            }
++            return 0;
++        }
++
+     default:
+         return -1;
+ 
+ 
+diff -ur src/openssl/include/openssl/evp.h other/openssl/include/openssl/evp.h
+--- src/openssl/include/openssl/evp.h	2017-05-25 14:54:34.000000000 +0200
++++ other/openssl/include/openssl/evp.h	2018-10-24 17:07:26.094628581 +0200
+@@ -423,6 +423,9 @@
+ # define         EVP_CTRL_TLS1_1_MULTIBLOCK_DECRYPT      0x1b
+ # define         EVP_CTRL_TLS1_1_MULTIBLOCK_MAX_BUFSIZE  0x1c
+ 
++# define         EVP_CTRL_GCM_GET_CTR           0x100
++# define         EVP_CTRL_GCM_SET_CTR           (EVP_CTRL_GCM_GET_CTR + 1)
++
+ /* RFC 5246 defines additional data to be 13 bytes in length */
+ # define         EVP_AEAD_TLS1_AAD_LEN           13
+ 

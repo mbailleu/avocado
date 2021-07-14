@@ -1,0 +1,187 @@
+diff --git a/CMake/FollyConfigChecks.cmake b/CMake/FollyConfigChecks.cmake
+index 6b8b308..1880a41 100644
+--- a/CMake/FollyConfigChecks.cmake
++++ b/CMake/FollyConfigChecks.cmake
+@@ -92,10 +92,13 @@ check_symbol_exists(accept4 sys/socket.h FOLLY_HAVE_ACCEPT4)
+ check_symbol_exists(getrandom sys/random.h FOLLY_HAVE_GETRANDOM)
+ check_symbol_exists(preadv sys/uio.h FOLLY_HAVE_PREADV)
+ check_symbol_exists(pwritev sys/uio.h FOLLY_HAVE_PWRITEV)
+-check_symbol_exists(clock_gettime time.h FOLLY_HAVE_CLOCK_GETTIME)
++#check_symbol_exists(clock_gettime time.h FOLLY_HAVE_CLOCK_GETTIME)
+ check_symbol_exists(pipe2 unistd.h FOLLY_HAVE_PIPE2)
+-check_symbol_exists(sendmmsg sys/socket.h FOLLY_HAVE_SENDMMSG)
+-check_symbol_exists(recvmmsg sys/socket.h FOLLY_HAVE_RECVMMSG)
++#check_symbol_exists(sendmmsg sys/socket.h FOLLY_HAVE_SENDMMSG)
++#check_symbol_exists(recvmmsg sys/socket.h FOLLY_HAVE_RECVMMSG)
++set(FOLLY_HAVE_SENDMMSG TRUE)
++set(FOLLY_HAVE_RECVMMSG TRUE)
++set(FOLLY_HAVE_CLOCK_GETTIME TRUE)
+ 
+ check_function_exists(malloc_usable_size FOLLY_HAVE_MALLOC_USABLE_SIZE)
+ 
+diff --git a/CMake/folly-deps.cmake b/CMake/folly-deps.cmake
+index d20f03d..87f3d76 100644
+--- a/CMake/folly-deps.cmake
++++ b/CMake/folly-deps.cmake
+@@ -33,22 +33,23 @@ else()
+ endif()
+ set(Boost_USE_STATIC_LIBS "${FOLLY_BOOST_LINK_STATIC}")
+ 
+-find_package(Boost 1.51.0 MODULE
+-  COMPONENTS
+-    context
+-    filesystem
+-    program_options
+-    regex
+-    system
+-    thread
+-  REQUIRED
+-)
++#find_package(Boost 1.51.0 MODULE
++#  COMPONENTS
++#    context
++#    filesystem
++#    program_options
++#    regex
++#    system
++#    thread
++#  REQUIRED
++#)
++set(Boost_LIBRARIES boost_context boost_filesystem boost_program_options boost_regex boost_system boost_thread)
+ list(APPEND FOLLY_LINK_LIBRARIES ${Boost_LIBRARIES})
+ list(APPEND FOLLY_INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIRS})
+ 
+ find_package(DoubleConversion MODULE REQUIRED)
+-list(APPEND FOLLY_LINK_LIBRARIES ${DOUBLE_CONVERSION_LIBRARY})
+-list(APPEND FOLLY_INCLUDE_DIRECTORIES ${DOUBLE_CONVERSION_INCLUDE_DIR})
++list(APPEND FOLLY_LINK_LIBRARIES double-conversion)
++list(APPEND FOLLY_INCLUDE_DIRECTORIES ${DOUBLE_CONVERSION_INCLUDE_DIR} "/usr/include/")
+ 
+ find_package(Gflags MODULE)
+ set(FOLLY_HAVE_LIBGFLAGS ${LIBGFLAGS_FOUND})
+@@ -59,19 +60,19 @@ if(LIBGFLAGS_FOUND)
+   list(APPEND CMAKE_REQUIRED_INCLUDES ${LIBGFLAGS_INCLUDE_DIR})
+ endif()
+ 
+-find_package(Glog MODULE)
+-set(FOLLY_HAVE_LIBGLOG ${GLOG_FOUND})
+-list(APPEND FOLLY_LINK_LIBRARIES ${GLOG_LIBRARY})
++#find_package(Glog MODULE)
++#set(FOLLY_HAVE_LIBGLOG ${GLOG_FOUND})
++list(APPEND FOLLY_LINK_LIBRARIES glog)
+ list(APPEND FOLLY_INCLUDE_DIRECTORIES ${GLOG_INCLUDE_DIR})
+ 
+-find_package(LibEvent MODULE REQUIRED)
+-list(APPEND FOLLY_LINK_LIBRARIES ${LIBEVENT_LIB})
++#find_package(LibEvent MODULE REQUIRED)
++list(APPEND FOLLY_LINK_LIBRARIES)
+ list(APPEND FOLLY_INCLUDE_DIRECTORIES ${LIBEVENT_INCLUDE_DIR})
+ 
+ find_package(OpenSSL MODULE REQUIRED)
+-list(APPEND FOLLY_LINK_LIBRARIES ${OPENSSL_LIBRARIES})
++list(APPEND FOLLY_LINK_LIBRARIES /home/maurice/projects/ShieldStoreish/bin-sgx/lib)
+ list(APPEND FOLLY_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
+-list(APPEND CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
++list(APPEND CMAKE_REQUIRED_LIBRARIES ssl)
+ list(APPEND CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
+ check_function_exists(ASN1_TIME_diff FOLLY_HAVE_OPENSSL_ASN1_TIME_DIFF)
+ 
+@@ -160,34 +161,35 @@ endif()
+ message(STATUS "Setting FOLLY_USE_SYMBOLIZER: ${FOLLY_USE_SYMBOLIZER}")
+ 
+ # Using clang with libstdc++ requires explicitly linking against libatomic
+-check_cxx_source_compiles("
+-  #include <atomic>
+-  int main(int argc, char** argv) {
+-    struct Test { int val; };
+-    std::atomic<Test> s;
+-    return static_cast<int>(s.is_lock_free());
+-  }"
+-  FOLLY_CPP_ATOMIC_BUILTIN
+-)
+-if(NOT FOLLY_CPP_ATOMIC_BUILTIN)
+-  list(APPEND CMAKE_REQUIRED_LIBRARIES atomic)
+-  list(APPEND FOLLY_LINK_LIBRARIES atomic)
+-  check_cxx_source_compiles("
+-    #include <atomic>
+-    int main(int argc, char** argv) {
+-      struct Test { int val; };
+-      std::atomic<Test> s2;
+-      return static_cast<int>(s2.is_lock_free());
+-    }"
+-    FOLLY_CPP_ATOMIC_WITH_LIBATOMIC
+-  )
+-  if (NOT FOLLY_CPP_ATOMIC_WITH_LIBATOMIC)
+-    message(
+-      FATAL_ERROR "unable to link C++ std::atomic code: you may need \
+-      to install GNU libatomic"
+-    )
+-  endif()
+-endif()
++#check_cxx_source_compiles("
++#  #include <atomic>
++#  int main(int argc, char** argv) {
++#    struct Test { int val; };
++#    std::atomic<Test> s;
++#    return static_cast<int>(s.is_lock_free());
++#  }"
++#  FOLLY_CPP_ATOMIC_BUILTIN
++#)
++#if(NOT FOLLY_CPP_ATOMIC_BUILTIN)
++#  list(APPEND CMAKE_REQUIRED_LIBRARIES atomic)
++#  list(APPEND FOLLY_LINK_LIBRARIES atomic)
++#  check_cxx_source_compiles("
++#    #include <atomic>
++#    int main(int argc, char** argv) {
++#      struct Test { int val; };
++#      std::atomic<Test> s2;
++#      return static_cast<int>(s2.is_lock_free());
++#    }"
++#    FOLLY_CPP_ATOMIC_WITH_LIBATOMIC
++#  )
++#  if (NOT FOLLY_CPP_ATOMIC_WITH_LIBATOMIC)
++#    message(
++#      FATAL_ERROR "unable to link C++ std::atomic code: you may need \
++#      to install GNU libatomic"
++#    )
++#  endif()
++#endif()
++set(FOLLY_CPP_ATOMIC_BUILTIN TRUE)
+ 
+ option(
+   FOLLY_LIBRARY_SANITIZE_ADDRESS
+@@ -221,12 +223,12 @@ endif()
+ 
+ add_library(folly_deps INTERFACE)
+ 
+-find_package(fmt CONFIG)
+-if (NOT DEFINED fmt_CONFIG)
++#find_package(fmt CONFIG)
++#if (NOT DEFINED fmt_CONFIG)
+     # Fallback on a normal search on the current system
+-    find_package(fmt MODULE REQUIRED)
+-endif()
+-target_link_libraries(folly_deps INTERFACE fmt::fmt)
++    #    find_package(fmt MODULE REQUIRED)
++    #endif()
++target_link_libraries(folly_deps INTERFACE fmt)
+ 
+ list(REMOVE_DUPLICATES FOLLY_INCLUDE_DIRECTORIES)
+ target_include_directories(folly_deps INTERFACE ${FOLLY_INCLUDE_DIRECTORIES})
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 29d0907..c9cb621 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -34,8 +34,12 @@ set(CMAKE_MODULE_PATH
+   "${CMAKE_CURRENT_SOURCE_DIR}/../opensource/fbcode_builder/CMake"
+   # For shipit-transformed builds
+   "${CMAKE_CURRENT_SOURCE_DIR}/build/fbcode_builder/CMake"
++  "${CMAKE_CURRENT_SOURCE_DIR}/../bin-sgx/"
+   ${CMAKE_MODULE_PATH})
+ 
++include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../bin-sgx/usr/local/include")
++link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../bin-sgx/usr/local/lib")
++
+ # package information
+ set(PACKAGE_NAME      "folly")
+ set(PACKAGE_VERSION   "0.58.0-dev")

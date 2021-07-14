@@ -1,0 +1,15 @@
+[submodule "eRPC"]
+	path = eRPC
+	url = https://github.com/mbailleu/avocado-eRPC.git
+[submodule "src/debug_print"]
+	path = src/debug_print
+	url = https://github.com/mbailleu/debug_print.git
+[submodule "src/slab_allocator"]
+	path = src/slab_allocator
+	url = https://github.com/mbailleu/slab_allocator.git
+[submodule "cityhash"]
+	path = cityhash
+	url = https://github.com/google/cityhash.git
+[submodule "SpeicherDPDK"]
+	path = SpeicherDPDK
+	url = https://github.com/mbailleu/SpeicherDPDK.git

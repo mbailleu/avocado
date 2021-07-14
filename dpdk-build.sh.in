@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+set -e
+set -x
+
+SRC_DIR="@CMAKE_CURRENT_SOURCE_DIR@"
+DPDK_SRC_DIR="@DPDK_DIR@"
+DPDK_BINARY_DIR="@DPDK_BINARY_DIR@"
+SCONE_FLAG="@SCONE_FLAG@"
+export CC="@CMAKE_C_COMPILER@"
+
+cd $DPDK_SRC_DIR
+make config T=x86_64-native-linuxapp-gcc O=$DPDK_BINARY_DIR
+cd $DPDK_BINARY_DIR
+patch -p0 < $SRC_DIR/dpdk-avocado.patch
+make -j$(nproc) EXTRA_CFLAGS="-Wno-incompatible-pointer-types -Wno-error $SCONE_FLAG" T=x86_64-native-linuxapp-gcc
