@@ -14,12 +14,13 @@ gcc9Stdenv.mkDerivation {
     glog
     folly
     openssl
-    boost175
+    boost
     jemalloc
     double-conversion
     numactl
     libevent
     gflags
     docopt_cpp
+    ninja
   ];
 }

@@ -1,0 +1,67 @@
+--- ../build2/.config	2021-07-12 13:03:33.291123310 +0000
++++ .config	2021-07-12 13:03:09.531550761 +0000
+@@ -40,8 +40,8 @@
+ CONFIG_RTE_LIBEAL_USE_HPET=n
+ CONFIG_RTE_EAL_ALLOW_INV_SOCKET_ID=n
+ CONFIG_RTE_EAL_ALWAYS_PANIC_ON_ERROR=n
+-CONFIG_RTE_EAL_IGB_UIO=y
+-CONFIG_RTE_EAL_VFIO=y
++CONFIG_RTE_EAL_IGB_UIO=n
++CONFIG_RTE_EAL_VFIO=n
+ CONFIG_RTE_MAX_VFIO_GROUPS=64
+ CONFIG_RTE_MALLOC_DEBUG=n
+ CONFIG_RTE_EAL_NUMA_AWARE_HUGEPAGES=y
+@@ -233,7 +233,7 @@
+ # Compile Marvell PMD driver
+ CONFIG_RTE_LIBRTE_MRVL_PMD=n
+ # Compile virtual device driver for NetVSC on Hyper-V/Azure
+-CONFIG_RTE_LIBRTE_VDEV_NETVSC_PMD=y
++CONFIG_RTE_LIBRTE_VDEV_NETVSC_PMD=n
+ # Compile null PMD
+ CONFIG_RTE_LIBRTE_PMD_NULL=y
+ # Compile software PMD backed by PCAP files
+@@ -251,10 +251,10 @@
+ CONFIG_RTE_PMD_PACKET_PREFETCH=y
+ # Compile generic wireless base band device library
+ # EXPERIMENTAL: API may change without prior notice
+-CONFIG_RTE_LIBRTE_BBDEV=y
++CONFIG_RTE_LIBRTE_BBDEV=n
+ CONFIG_RTE_BBDEV_MAX_DEVS=128
+ # Compile PMD for NULL bbdev device
+-CONFIG_RTE_LIBRTE_PMD_BBDEV_NULL=y
++CONFIG_RTE_LIBRTE_PMD_BBDEV_NULL=n
+ # Compile PMD for turbo software bbdev device
+ CONFIG_RTE_LIBRTE_PMD_BBDEV_TURBO_SW=n
+ # Compile generic crypto device library
+@@ -429,7 +429,7 @@
+ CONFIG_RTE_KNI_KMOD_ETHTOOL=n
+ CONFIG_RTE_KNI_PREEMPT_DEFAULT=y
+ # Compile architecture we compile for. pdump library
+-CONFIG_RTE_LIBRTE_PDUMP=y
++CONFIG_RTE_LIBRTE_PDUMP=n
+ # Compile vhost user library
+ CONFIG_RTE_LIBRTE_VHOST=y
+ CONFIG_RTE_LIBRTE_VHOST_NUMA=y
+@@ -441,17 +441,17 @@
+ CONFIG_RTE_APP_TEST=y
+ CONFIG_RTE_APP_TEST_RESOURCE_TAR=n
+ # Compile architecture we compile for. procinfo application
+-CONFIG_RTE_PROC_INFO=y
++CONFIG_RTE_PROC_INFO=n
+ # Compile architecture we compile for. PMD test application
+-CONFIG_RTE_TEST_PMD=y
++CONFIG_RTE_TEST_PMD=n
+ CONFIG_RTE_TEST_PMD_RECORD_CORE_CYCLES=n
+ CONFIG_RTE_TEST_PMD_RECORD_BURST_STATS=n
+ # Compile architecture we compile for. bbdev test application
+-CONFIG_RTE_TEST_BBDEV=y
++CONFIG_RTE_TEST_BBDEV=n
+ # Compile architecture we compile for. crypto performance application
+-CONFIG_RTE_APP_CRYPTO_PERF=y
++CONFIG_RTE_APP_CRYPTO_PERF=n
+ # Compile architecture we compile for. eventdev application
+-CONFIG_RTE_APP_EVENTDEV=y
++CONFIG_RTE_APP_EVENTDEV=n
+ CONFIG_RTE_EXEC_ENV_LINUXAPP=y
+ CONFIG_RTE_ARCH_X86_64=y
+ CONFIG_RTE_ARCH_X86=y
